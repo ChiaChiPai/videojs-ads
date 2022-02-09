@@ -1,0 +1,16 @@
+{
+  "name": "videoad",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "video.js": "^7.17.0",
+    "videojs-contrib-ads": "^6.9.0",
+    "videojs-ima": "^1.11.0"
+  }
+}

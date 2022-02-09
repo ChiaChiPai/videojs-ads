@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="./node_modules/video.js/dist/video-js.css">
+  <link rel="stylesheet" href="./node_modules/videojs-contrib-ads/dist/videojs.ads.css">
+  <style>
+    /* 在廣告期間不出現 control bar */
+    .vjs-ad-playing .vjs-control-bar {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="info">
+    <p>
+      You can see the Video.js Preroll plugin in action below.
+      Look at the source of this page to see how to use it with your videos.
+    </p>
+  </div>
+  <video id="examplePlayer"
+    class="video-js vjs-default-skin"
+    style="position: relative;"
+    height="300"
+    width="600"
+    controls>
+    <p>
+      Your browser doesn't support video. Please <a href="http://browsehappy.com/">upgrade your browser</a> to see the example.
+    </p>
+    <source src="https://storage.googleapis.com/gvabox/media/samples/android.mp4" type="video/mp4">
+  </video>
+  <div style="background: blue; width: 50px; height: 50px;" id="skip">SKIP</div>
+  
+  <script src="./node_modules/video.js/dist/video.js"></script>
+  <script src="./node_modules/videojs-contrib-ads/dist/videojs.ads.js"></script>
+  <script>
+    // 透過套件在片頭播放廣告
+    var player = videojs('examplePlayer');
+
+    player.ads({
+      liveCuePoints: true
+    }); // initialize videojs-contrib-ads
+
+    // request ads whenever there's new video content
+    player.on('contentchanged', function() {
+      // in a real plugin, you might fetch your ad inventory here
+      player.trigger('adsready');
+    });
+
+    player.on('readyforpreroll', function() {
+      player.ads.startLinearAdMode();
+      // play your linear ad content
+      // in this example, we use a static mp4
+      player.src('https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8');
+
+      const click = document.querySelector('#skip')
+      click.addEventListener('click', () => {
+        player.ads.endLinearAdMode()
+      })
+
+      // send event when ad is playing to remove loading spinner
+      player.one('adplaying', function() {
+        player.trigger('ads-ad-started');
+      });
+
+      // resume content when all your linear ads have finished
+      player.one('adended', function() {
+        player.ads.endLinearAdMode();
+      });
+    });
+
+    player.trigger('adsready');
+    
+
+  </script>
+</body>
+</html>
